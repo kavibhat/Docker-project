@@ -6,7 +6,7 @@ WORKDIR /app
 # Copy package.json only first (layer caching trick)
 # If package.json unchanged → npm install uses cache
 COPY package.json .
-RUN npm install --omit=dev --production
+RUN npm install --production
 
 # ── STAGE 2: Production image ─────────────────────────────────
 FROM node:18-alpine AS runner
