@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  quote-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quote-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-",
+             "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - hotel-net
+
+  # Optional: nginx reverse proxy in front
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      quote-api:
+        condition: service_healthy
+    networks:
+      - hotel-net
+
+networks:
+  hotel-net:
+    driver: bridge
