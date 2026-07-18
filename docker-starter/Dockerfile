@@ -1,7 +1,7 @@
 # Dockerfile
 
 # ── STAGE 1: Install dependencies ────────────────────────────
-FROM node:18-alpine AS deps
+FROM node:18-slim AS deps
 WORKDIR /app
 # Copy package.json only first (layer caching trick)
 # If package.json unchanged → npm install uses cache
@@ -9,11 +9,11 @@ COPY package.json .
 RUN npm install --production
 
 # ── STAGE 2: Production image ─────────────────────────────────
-FROM node:18-alpine AS runner
+FROM node:18-slim AS runner
 WORKDIR /app
 
 # Security: run as non-root user
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 
 # Copy only what we need from stage 1
 COPY --from=deps /app/node_modules ./node_modules

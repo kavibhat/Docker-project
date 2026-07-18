@@ -49,9 +49,9 @@ app.get('/info', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Quote API running on port ${PORT}`);
-  console.log(`Health: http://localhost:${PORT}/health`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Quote API running globally inside container on port ${PORT}`);
+  console.log(`Health Check Endpoint: http://localhost:${PORT}/health`);
 });
 
 module.exports = app;
